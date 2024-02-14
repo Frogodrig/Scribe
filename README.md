@@ -1,2 +1,0 @@
-# Scribe
-Note taking app
