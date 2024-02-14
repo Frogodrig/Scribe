@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1707916613713,
+      "tag": "0000_sad_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707917767197,
+      "tag": "0001_redundant_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707920059504,
+      "tag": "0002_conscious_morlun",
+      "breakpoints": true
+    }
+  ]
+}
