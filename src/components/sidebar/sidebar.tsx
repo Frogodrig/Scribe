@@ -37,7 +37,7 @@ const Sidebar:React.FC<SidebarProps> = async ({params, className}) => {
     return (
     <aside className={twMerge('hidden sm:flex sm:flex-col w-[280px] shrink-0 p-4 md:gap-4 !justify-between', className)}>
         <div>
-            <WorkspaceDropdown privateWorkspaces={privateWorkspaces} sharedWorkspaces={sharedWorkspaces} collaboratingWorkspaces={collaboratingWorkspaces} defaultValue={[...privateWorkspaces, ...collaboratingWorkspaces, ...sharedWorkspaces].find(workspace=>workspace.id === params.workspaceId)}></WorkspaceDropdown>
+            <WorkspaceDropdown privateWorkspaces={privateWorkspaces} sharedWorkspaces={sharedWorkspaces} collaboratingWorkspaces={collaboratingWorkspaces} defaultValue={[...privateWorkspaces, ...collaboratingWorkspaces, ...sharedWorkspaces].find(workspace=>workspace.id === params.workspaceId)} />
         </div>
     </aside>
   )
