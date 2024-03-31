@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import ScribeHomeIcon from "../icons/scribeHomeIcon";
 import ScribeSettingsIcon from "../icons/scribeSettingsIcon";
 import ScribeTrashIcon from "../icons/scribeTrashIcon";
+import Settings from "../settings/settings";
 
 interface NativeNavigationProps {
   myWorkspaceId: string;
@@ -32,20 +33,20 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
           </Link>
         </li>
 
-        <li>
-          <Link
+        <Settings>
+          <li
             className="group/native
                  flex
                  text-Neutrals/neutrals-7
                  transition-all
                  gap-2
+                 cursor-pointer
                 "
-            href={`/dashboard/${myWorkspaceId}`}
           >
             <ScribeSettingsIcon />
             <span>Settings</span>
-          </Link>
-        </li>
+          </li>
+        </Settings>
 
         <li>
           <Link

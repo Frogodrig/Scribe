@@ -16,26 +16,45 @@ import {
 import { Lock, Plus, Share } from "lucide-react";
 import { Button } from "../ui/button";
 import { v4 } from "uuid";
-import { addCollaborators, createWorkspace } from "@/lib/supabase/queries";
+import {
+  addCollaborators,
+  createWorkspace,
+  removeCollaborators,
+} from "@/lib/supabase/queries";
 import CollaboratorSearch from "./collaborator-search";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
+import { useAppState } from "@/lib/providers/state-provider";
 
 const WorkspaceCreator = () => {
   const { user } = useSupabaseUser();
   const { toast } = useToast();
   const router = useRouter();
+  const { state, workspaceId, dispatch } = useAppState();
   const [permissions, setPermissions] = useState("private");
   const [title, setTitle] = useState("");
   const [collaborators, setCollaborators] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const addCollaborator = (user: User) => {
-    setCollaborators([...collaborators, user]);
+  const addCollaborator = async (profile: User) => {
+    if (!workspaceId) return;
+    //WIP Subscription
+    // if(subscription?.status !== 'active' && collaborators.length >=2) {
+    //     setOpen(true);
+    //     return;
+    // }
+    await addCollaborators(collaborators, workspaceId);
+    setCollaborators([...collaborators, profile]);
   };
 
-  const removeCollaborator = (user: User) => {
+  const removeCollaborator = async (user: User) => {
+    if (!workspaceId) return;
+    if (collaborators.length === 1) {
+      setPermissions("Private");
+    }
+
+    await removeCollaborators([user], workspaceId);
     setCollaborators(collaborators.filter((c) => c.id !== user.id));
   };
 

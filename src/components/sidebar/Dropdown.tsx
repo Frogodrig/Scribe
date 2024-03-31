@@ -16,6 +16,7 @@ import TooltipComponent from "../global/tooltip-component";
 import { PlusIcon, Trash } from "lucide-react";
 import { File } from "@/lib/supabase/supabase.types";
 import { v4 } from "uuid";
+import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 
 interface DropdownProps {
   title: string;
@@ -37,6 +38,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const supabase = createClientComponentClient();
   const { toast } = useToast();
+  const { user } = useSupabaseUser();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
@@ -170,7 +172,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       } else {
         toast({
           title: "Success",
-          description: "Update emoji for the folder",
+          description: "Updated emoji for the folder",
         });
       }
     }
@@ -210,6 +212,65 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
   //move to trash
+  const moveToTrash = async () => {
+    if (!user?.email || !workspaceId) return;
+    const pathId = id.split("folder");
+    if (listType === "folder") {
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: {
+          folder: { inTrash: `Folder deleted by ${user?.email}` },
+          folderId: pathId[0],
+          workspaceId,
+        },
+      });
+      const { data, error } = await updateFolder(
+        { inTrash: `Folder deleted by ${user?.email}` },
+        pathId[0]
+      );
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Could not move the folder to trash.",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Moved folder to trash.",
+        });
+      }
+    }
+
+    if (listType === "file") {
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: {
+          file: { inTrash: `File deleted by ${user?.email}` },
+          folderId: pathId[0],
+          workspaceId,
+          fileId: pathId[1],
+        },
+      });
+      const { data, error } = await updateFile(
+        { inTrash: `File deleted by ${user?.email}` },
+        pathId[1]
+      );
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Could not move the file to trash.",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Moved file to trash.",
+        });
+      }
+    }
+  };
+
   const isFolder = listType === "folder";
   const groupIdentifies = clsx(
     "dark:text-white whitespace-nowrap flex justify-between items-center w-full relative",
@@ -289,7 +350,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           >
             <TooltipComponent message="Delete Folder">
               <Trash
-                // onClick={moveToTrash}
+                onClick={moveToTrash}
                 size={15}
                 className="hover:dark:text-white dark:text-Neutrals/neutrals-7 transition-colors"
               />
