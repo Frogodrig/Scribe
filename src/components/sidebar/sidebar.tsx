@@ -1,5 +1,6 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
+
 import { cookies } from "next/headers";
 import {
   getCollaboratingWorkspaces,
@@ -23,27 +24,24 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   const supabase = createServerComponentClient({ cookies });
-
-  //Check for user
+  //user
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) return;
 
-  //Check for subscription status
+  //subscr
   const { data: subscriptionData, error: subscriptionError } =
     await getUserSubscriptionStatus(user.id);
 
-  //Get the folders
+  //folders
   const { data: workspaceFolderData, error: foldersError } = await getFolders(
     params.workspaceId
   );
-
-  //Check errors
+  //error
   if (subscriptionError || foldersError) redirect("/dashboard");
 
-  //Get all the diff workspaces: private, collaborating, shared
   const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =
     await Promise.all([
       getPrivateWorkspaces(user.id),
@@ -51,6 +49,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
       getSharedWorkspaces(user.id),
     ]);
 
+  //get all the different workspaces private collaborating shared
   return (
     <aside
       className={twMerge(
@@ -76,18 +75,19 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
         <NativeNavigation myWorkspaceId={params.workspaceId} />
         <ScrollArea
           className="overflow-scroll relative
-                h-[450px]"
+          h-[450px]
+        "
         >
           <div
             className="pointer-events-none 
-                    w-full 
-                    absolute
-                    bottom-0
-                    h-20
-                    bg-gradient-to-t
-                    from-background
-                    to-transparent
-                    z-40"
+          w-full 
+          absolute 
+          bottom-0 
+          h-20 
+          bg-gradient-to-t 
+          from-background 
+          to-transparent 
+          z-40"
           />
           <FoldersDropdownList
             workspaceFolders={workspaceFolderData || []}

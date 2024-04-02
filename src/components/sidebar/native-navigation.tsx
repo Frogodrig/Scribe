@@ -5,27 +5,28 @@ import ScribeHomeIcon from "../icons/scribeHomeIcon";
 import ScribeSettingsIcon from "../icons/scribeSettingsIcon";
 import ScribeTrashIcon from "../icons/scribeTrashIcon";
 import Settings from "../settings/settings";
+import { Trash } from "lucide-react";
 
 interface NativeNavigationProps {
   myWorkspaceId: string;
-  classsName?: string;
+  className?: string;
 }
 
 const NativeNavigation: React.FC<NativeNavigationProps> = ({
   myWorkspaceId,
-  classsName,
+  className,
 }) => {
   return (
-    <nav className={twMerge("my-2", classsName)}>
+    <nav className={twMerge("my-2", className)}>
       <ul className="flex flex-col gap-2">
         <li>
           <Link
             className="group/native
-                 flex
-                 text-Neutrals/neutrals-7
-                 transition-all
-                 gap-2
-                "
+            flex
+            text-Neutrals/neutrals-7
+            transition-all
+            gap-2
+          "
             href={`/dashboard/${myWorkspaceId}`}
           >
             <ScribeHomeIcon />
@@ -36,32 +37,31 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
         <Settings>
           <li
             className="group/native
-                 flex
-                 text-Neutrals/neutrals-7
-                 transition-all
-                 gap-2
-                 cursor-pointer
-                "
+            flex
+            text-Neutrals/neutrals-7
+            transition-all
+            gap-2
+            cursor-pointer
+          "
           >
             <ScribeSettingsIcon />
             <span>Settings</span>
           </li>
         </Settings>
 
-        <li>
-          <Link
+        {/* <Trash>
+          <li
             className="group/native
-                 flex
-                 text-Neutrals/neutrals-7
-                 transition-all
-                 gap-2
-                "
-            href={`/dashboard/${myWorkspaceId}`}
+            flex
+            text-Neutrals/neutrals-7
+            transition-all
+            gap-2
+          "
           >
             <ScribeTrashIcon />
             <span>Trash</span>
-          </Link>
-        </li>
+          </li>
+        </Trash> */}
       </ul>
     </nav>
   );

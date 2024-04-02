@@ -20,14 +20,12 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   workspaceFolders,
   workspaceId,
 }) => {
-  //WIP local state folders.
-  //WIP Set real time updates.
   const { state, dispatch, folderId } = useAppState();
+  const { toast } = useToast();
   const [folders, setFolders] = useState(workspaceFolders);
   const { subscription } = useSupabaseUser();
-  const { toast } = useToast();
 
-  //effect set initial state based on the server data inside our app state.
+  //effec set nitial satte server app state
   useEffect(() => {
     if (workspaceFolders.length > 0) {
       dispatch({
@@ -44,20 +42,21 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         },
       });
     }
-  }, [dispatch, state.workspaces, workspaceFolders, workspaceId]);
-
+  }, [workspaceFolders, workspaceId]);
   //state
+
   useEffect(() => {
     setFolders(
       state.workspaces.find((workspace) => workspace.id === workspaceId)
         ?.folders || []
     );
-  }, [state, workspaceId]);
+  }, [state]);
 
   //add folder
   const addFolderHandler = async () => {
-    // if(folders.length>=3 && !subscription) {
-
+    // if (folders.length >= 3 && !subscription) {
+    //   setOpen(true);
+    //   return;
     // }
     const newFolder: Folder = {
       data: null,
@@ -74,7 +73,6 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       payload: { workspaceId, folder: { ...newFolder, files: [] } },
     });
     const { data, error } = await createFolder(newFolder);
-
     if (error) {
       toast({
         title: "Error",
@@ -84,7 +82,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
     } else {
       toast({
         title: "Success",
-        description: "Created folder",
+        description: "Created folder.",
       });
     }
   };
@@ -93,23 +91,23 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
     <>
       <div
         className="flex
-            sticky
-            z-20
-            top-0
-            bg-background
-            w-full
-            h-10
-            group/title
-            justify-between
-            items-center
-            pr-4
-            text-Neutrals/neutrals-8
-        "
+        sticky 
+        z-20 
+        top-0 
+        bg-background 
+        w-full  
+        h-10 
+        group/title 
+        justify-between 
+        items-center 
+        pr-4 
+        text-Neutrals/neutrals-8
+  "
       >
         <span
-          className="text-Neutrals/neutrals-8
-                font-bold
-                text-xs"
+          className="text-Neutrals-8 
+        font-bold 
+        text-xs"
         >
           FOLDERS
         </span>
@@ -118,9 +116,10 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
             onClick={addFolderHandler}
             size={16}
             className="group-hover/title:inline-block
-                    hidden
-                    cursor-pointer
-                  hover:dark:text-white"
+            hidden 
+            cursor-pointer
+            hover:dark:text-white
+          "
           />
         </TooltipComponent>
       </div>
@@ -137,7 +136,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
               title={folder.title}
               listType="folder"
               id={folder.id}
-              icondId={folder.iconId}
+              iconId={folder.iconId}
             />
           ))}
       </Accordion>

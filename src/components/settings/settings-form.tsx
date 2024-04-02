@@ -46,7 +46,7 @@ const SettingsForm = () => {
   // WIP Payment Portal
 
   //Add Collaborators
-  const addCollaborator = async (profile: User) => {
+  const addCollaborator = async (user: User) => {
     if (!workspaceId) return;
     //WIP Subscription
     // if(subscription?.status !== 'active' && collaborators.length >=2) {
@@ -54,7 +54,7 @@ const SettingsForm = () => {
     //     return;
     // }
     await addCollaborators(collaborators, workspaceId);
-    setCollaborators([...collaborators, profile]);
+    setCollaborators([...collaborators, user]);
 
     router.refresh();
   };
