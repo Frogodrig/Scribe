@@ -9,6 +9,7 @@ import {
   deleteFolder,
   updateFile,
   updateFolder,
+  updateWorkspace,
 } from "@/lib/supabase/queries";
 import { usePathname } from "next/navigation";
 import {
@@ -19,6 +20,10 @@ import {
 } from "../ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
+import Image from "next/image";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import EmojiPicker from "../global/emoji-picker";
+import BannerUpload from "../banner-upload/banner-upload";
 
 interface QuillEditorProps {
   dirDetails: File | Folder | workspace;
@@ -51,12 +56,14 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   dirType,
   fileId,
 }) => {
+  const supabase = createClientComponentClient();
   const { state, workspaceId, folderId, dispatch } = useAppState();
   const pathname = usePathname();
   const [quill, setQuill] = useState<any>(null);
   const [collaborators, setCollaborators] =
     useState<{ id: string; email: string; avatarUrl: string }[]>();
 
+  const [deletingBanner, setDeletingBanner] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const breadCrumbs = useMemo(() => {
@@ -200,6 +207,72 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
   };
 
+  const iconOnchange = async (icon: string) => {
+    if (!fileId) return;
+    if (dirType === "workspace") {
+      dispatch({
+        type: "UPDATE_WORKSPACE",
+        payload: { workspace: { iconId: icon }, workspaceId: fileId },
+      });
+      await updateWorkspace({ iconId: icon }, fileId);
+    }
+    if (dirType === "folder") {
+      if (!workspaceId) return;
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: {
+          folder: { iconId: icon },
+          workspaceId: workspaceId,
+          folderId: fileId,
+        },
+      });
+      await updateFolder({ iconId: icon }, fileId);
+    }
+    if (dirType === "file") {
+      if (!workspaceId || !folderId) return;
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: { file: { iconId: icon }, workspaceId, folderId, fileId },
+      });
+      await updateFile({ iconId: icon }, fileId);
+    }
+  };
+
+  const deleteBanner = async () => {
+    if (!fileId) return;
+    setDeletingBanner(true);
+    if (dirType === "file") {
+      if (!folderId || !workspaceId) return;
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: { file: { bannerUrl: "" }, fileId, folderId, workspaceId },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateFile({ bannerUrl: "" }, fileId);
+    }
+    if (dirType === "folder") {
+      if (!workspaceId) return;
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: { folder: { bannerUrl: "" }, folderId: fileId, workspaceId },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateFolder({ bannerUrl: "" }, fileId);
+    }
+    if (dirType === "workspace") {
+      dispatch({
+        type: "UPDATE_WORKSPACE",
+        payload: {
+          workspace: { bannerUrl: "" },
+          workspaceId: fileId,
+        },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateWorkspace({ bannerUrl: "" }, fileId);
+    }
+    setDeletingBanner(false);
+  };
+
   return (
     <>
       <div className="relative">
@@ -299,7 +372,22 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           </div>
         </div>
       </div>
-      {/* {details.bannerUrl && <></>} */}
+
+      {details.bannerUrl && (
+        <div className="relative w-full h-[200px]">
+          <Image
+            src={
+              supabase.storage
+                .from("file-banners")
+                .getPublicUrl(details.bannerUrl).data.publicUrl
+            }
+            fill
+            className="w-full md:h-48 h-20 object-cover"
+            alt="Banner Image"
+          />
+        </div>
+      )}
+
       <div
         className="flex 
       justify-center 
@@ -308,6 +396,54 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       mt-2 
       relative"
       >
+        <div
+          className="w-full 
+        self-center 
+        max-w-[800px] 
+        flex 
+        flex-col 
+        px-7 
+        lg:my-8"
+        >
+          <div className="text-[80px]">
+            <EmojiPicker getValue={iconOnchange}>
+              <div
+                className="w-[100px] 
+              cursor-pointer 
+              transition-colors 
+              h-[100px] 
+              flex 
+              items-center 
+              justify-center 
+              hover:bg-muted 
+              rounded-xl"
+              >
+                {details.iconId}
+              </div>
+            </EmojiPicker>
+          </div>
+          <div className="flex">
+            <BannerUpload
+              details={details}
+              id={fileId}
+              dirType={dirType}
+              className="mt-2 text-sm text-muted-foreground p-2 hover:text-card-foreground transition-all rounded-md"
+            >
+              {details.bannerUrl ? "Update Banner" : "Add Banner"}
+            </BannerUpload>
+            {details.bannerUrl && (
+              <Button
+                onClick={deleteBanner}
+                variant="ghost"
+                className="gap-2 hover:bg-background flex items-center justify-center mt-2 text-sm text-muted-foreground w-36 p-2 rounded-md"
+              >
+                <span className="whitespace-nowrap font-normal">
+                  Remove Banner
+                </span>
+              </Button>
+            )}
+          </div>
+        </div>
         <div id="container" className="max-w-[800]" ref={wrapperRef}></div>
       </div>
     </>
