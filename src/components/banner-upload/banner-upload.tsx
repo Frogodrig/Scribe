@@ -12,11 +12,9 @@ interface BannerUploadProps {
   className?: string;
   dirType: "workspace" | "folder" | "file";
   id: string;
-  details: appWorkspacesType | appFoldersType | File | workspace | Folder;
 }
 
 const BannerUpload: React.FC<BannerUploadProps> = ({
-  details,
   id,
   dirType,
   children,
