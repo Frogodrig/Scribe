@@ -1,4 +1,5 @@
 import { SubscriptionModalProvider } from "@/lib/providers/subscription-modal-provider";
+import { getActiveProductsWithPrice } from "@/lib/supabase/queries";
 import React from "react";
 
 interface LayoutProps {
@@ -7,9 +8,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = async ({ children, params }) => {
+  const { data: products, error } = await getActiveProductsWithPrice();
   return (
     <main className="flex over-hidden h-screen">
-      <SubscriptionModalProvider>{children}</SubscriptionModalProvider>
+      <SubscriptionModalProvider products={products}>
+        {children}
+      </SubscriptionModalProvider>
     </main>
   );
 };

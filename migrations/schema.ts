@@ -10,7 +10,7 @@ import {
   uuid,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const keyStatus = pgEnum("key_status", [
   "expired",
@@ -53,6 +53,22 @@ export const subscriptionStatus = pgEnum("subscription_status", [
   "canceled",
   "active",
   "trialing",
+]);
+export const equalityOp = pgEnum("equality_op", [
+  "in",
+  "gte",
+  "gt",
+  "lte",
+  "lt",
+  "neq",
+  "eq",
+]);
+export const action = pgEnum("action", [
+  "ERROR",
+  "TRUNCATE",
+  "DELETE",
+  "UPDATE",
+  "INSERT",
 ]);
 
 export const prices = pgTable("prices", {
@@ -213,4 +229,16 @@ export const collaborators = pgTable("collaborators", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  id: uuid("id").defaultRandom().notNull(),
 });
+
+export const productsRelations = relations(products, ({ many }) => ({
+  prices: many(prices),
+}));
+
+export const pricesRelations = relations(prices, ({ one }) => ({
+  product: one(products, {
+    fields: [prices.productId],
+    references: [products.id],
+  }),
+}));
