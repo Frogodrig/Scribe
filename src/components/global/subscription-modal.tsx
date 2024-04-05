@@ -1,4 +1,4 @@
-"use-client";
+"use client";
 import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
 import React, { useState } from "react";
 import {
@@ -9,10 +9,10 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
+import { formatPrice, postData } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Loader from "./loader";
 import { Price, ProductWithPrice } from "@/lib/supabase/supabase.types";
-import { formatPrice, postData } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
 import { getStripe } from "@/lib/stripe/stripeClient";
 
@@ -31,7 +31,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
     try {
       setIsLoading(true);
       if (!user) {
-        toast({ title: "You must be logged in." });
+        toast({ title: "You must be logged in" });
         setIsLoading(false);
         return;
       }
@@ -44,7 +44,8 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
         url: "/api/create-checkout-session",
         data: { price },
       });
-      console.log("Getting checkout for Stripe");
+
+      console.log("Getting Checkout for stripe");
       const stripe = await getStripe();
       stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
@@ -64,12 +65,16 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
             <DialogTitle>Upgrade to a Pro Plan</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-            To access Pro features you need to upgrade to a paid plan.
+            To access Pro features you need to have a paid plan.
           </DialogDescription>
           {products.length
             ? products.map((product) => (
                 <div
-                  className="flex justify-between items-center"
+                  className="
+                  flex
+                  justify-between
+                  items-center
+                  "
                   key={product.id}
                 >
                   {product.prices?.map((price) => (
