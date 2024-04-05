@@ -43,7 +43,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
-  //Folder Title synced with server data and local
+  //folder Title synced with server data and local
   const folderTitle: string | undefined = useMemo(() => {
     if (listType === "folder") {
       const stateTitle = state.workspaces
@@ -54,7 +54,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   }, [state, listType, workspaceId, id, title]);
 
-  //fileTitle
+  //fileItitle
+
   const fileTitle: string | undefined = useMemo(() => {
     if (listType === "file") {
       const fileAndFolderId = id.split("folder");
@@ -81,12 +82,12 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
-  //Double click handler
+  //double click handler
   const handleDoubleClick = () => {
     setIsEditing(true);
   };
+  //blur
 
-  //onBlur
   const handleBlur = async () => {
     if (!isEditing) return;
     setIsEditing(false);
@@ -261,7 +262,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           "group-hover/folder:block": listType === "folder",
         }
       ),
-    [listType]
+    [isFolder]
   );
 
   const addNewFile = async () => {

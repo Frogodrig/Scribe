@@ -5,7 +5,7 @@ import ScribeHomeIcon from "../icons/scribeHomeIcon";
 import ScribeSettingsIcon from "../icons/scribeSettingsIcon";
 import ScribeTrashIcon from "../icons/scribeTrashIcon";
 import Settings from "../settings/settings";
-import { Trash } from "lucide-react";
+import Trash from "../trash/trash";
 
 interface NativeNavigationProps {
   myWorkspaceId: string;
@@ -49,7 +49,7 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
           </li>
         </Settings>
 
-        {/* <Trash>
+        <Trash>
           <li
             className="group/native
             flex
@@ -61,7 +61,7 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
             <ScribeTrashIcon />
             <span>Trash</span>
           </li>
-        </Trash> */}
+        </Trash>
       </ul>
     </nav>
   );
